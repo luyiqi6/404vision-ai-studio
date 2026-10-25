@@ -185,12 +185,37 @@ document.getElementById("save").addEventListener("click", function() {
   <label for="vision-prompt">创作提示词</label>
   <textarea id="vision-prompt" placeholder="例如：Y2K underground rap cover, chrome star, dark emo atmosphere, grainy 2000s photography..." style="display:block;box-sizing:border-box;width:100%;min-height:120px;margin:10px 0;padding:12px;background:#080808;color:white;border:1px solid #444;border-radius:10px;font-size:15px;"></textarea>
 
-  <label for="vision-size">图片尺寸</label>
-  <select id="vision-size" style="display:block;width:100%;margin:10px 0;padding:12px;background:#080808;color:white;border:1px solid #444;border-radius:8px;">
-    <option value="1024x1024">正方形 · 1024 × 1024</option>
-    <option value="1536x1024">横向 · 1536 × 1024</option>
-    <option value="1024x1536">纵向 · 1024 × 1536</option>
+  
+<div class="vision-controls">
+  <label for="vision-mode">创作模式</label>
+  <select id="vision-mode">
+    <option value="draft">草稿模式 · 快速预览</option>
+    <option value="final">正式封面模式</option>
   </select>
+
+  <label for="vision-model">生图模型</label>
+  <select id="vision-model">
+    <option value="gpt-image-2.5">GPT Image 2.5</option>
+    <option value="gpt-image-2-high">GPT Image 2 High</option>
+    <option value="gpt-image-2-1k">GPT Image 2 1K</option>
+    <option value="gpt-image-2">GPT Image 2</option>
+    <option value="gpt-image-2.5-flare">GPT Image 2.5 Flare</option>
+    <option value="gpt-image-2.5-flare-adobe">GPT Image 2.5 Flare Adobe</option>
+    <option value="adobe-gpt-image-2.5-flare">Adobe GPT Image 2.5 Flare</option>
+    <option value="gpt-image-2.5-sunburst">GPT Image 2.5 Sunburst</option>
+    <option value="gpt-image-2.5-sunburst-adobe">GPT Image 2.5 Sunburst Adobe</option>
+    <option value="adobe-gpt-image-2.5-sunburst">Adobe GPT Image 2.5 Sunburst</option>
+    <option value="image2-A">Image2-A</option>
+  </select>
+
+  <label for="vision-size">图片尺寸</label>
+  <select id="vision-size">
+    <option value="1024x1024">1K · 1024 × 1024</option>
+    <option value="2048x2048">2K · 2048 × 2048</option>
+    <option value="4096x4096">4K · 4096 × 4096</option>
+  </select>
+</div>
+
 
   <button id="vision-generate" type="button" style="width:100%;padding:14px;background:#b6ff00;color:#080808;border:0;border-radius:10px;font-weight:bold;font-size:16px;">
     GENERATE IMAGE ↗
