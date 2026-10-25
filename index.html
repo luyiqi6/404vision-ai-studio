@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404vision AI Studio</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #0a0a0d;
+  color: #f4f4f5;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+header {
+  padding: 24px 20px;
+  border-bottom: 1px solid #29292f;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo { font-weight: 900; letter-spacing: 2px; }
+.logo span { color: #c5ff35; }
+.status { color: #c5ff35; font-size: 11px; }
+main { padding: 28px 20px; max-width: 760px; margin: auto; }
+.eyebrow { color: #c5ff35; font-size: 11px; letter-spacing: 3px; }
+h1 { font-size: clamp(36px, 10vw, 64px); line-height: 1; margin: 16px 0; }
+h1 span { color: #c5ff35; }
+.subtitle { color: #9999a5; line-height: 1.7; font-size: 14px; }
+.panel {
+  margin-top: 28px;
+  padding: 20px;
+  border: 1px solid #303038;
+  background: #121216;
+  border-radius: 14px;
+}
+label { display: block; font-size: 12px; margin: 18px 0 9px; color: #b9b9c3; }
+textarea, select {
+  width: 100%;
+  color: white;
+  background: #09090c;
+  border: 1px solid #383842;
+  border-radius: 9px;
+  padding: 13px;
+  font: inherit;
+}
+textarea { min-height: 110px; resize: vertical; }
+button {
+  width: 100%;
+  margin-top: 16px;
+  padding: 15px;
+  border: 0;
+  border-radius: 9px;
+  background: #c5ff35;
+  color: #101010;
+  font-size: 14px;
+  font-weight: 800;
+}
+.note { color: #8c8c98; font-size: 11px; line-height: 1.6; }
+.preview {
+  min-height: 160px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px dashed #454550;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #8c8c98;
+}
+footer { padding: 28px 20px; color: #676773; font-size: 11px; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">404<span>VISION</span></div>
+  <div class="status">● CREATIVE STUDIO</div>
+</header>
+<main>
+  <div class="eyebrow">YOUR PERSONAL ART LAB</div>
+  <h1>MAKE IT<br><span>UNREAL.</span></h1>
+  <p class="subtitle">
+    UG RAP / EMO / Y2K / UNDERGROUND CULTURE<br>
+    把脑海里的视觉，变成你的下一张封面。
+  </p>
+
+  <section class="panel">
+    <div class="eyebrow">01 / CREATE</div>
+    <label for="prompt">描述你想要的封面</label>
+    <textarea id="prompt" placeholder="例如：银色星星、模糊闪光灯、2000 年代地下杂志质感……"></textarea>
+
+    <label for="style">视觉方向</label>
+    <select id="style">
+      <option>UG Rap / Underground</option>
+      <option>EMO / Dark Romance</option>
+      <option>Y2K / Cyber Nostalgia</option>
+      <option>Grunge / Analog Noise</option>
+    </select>
+
+    <button id="save">保存创作灵感</button>
+    <p class="note">当前版本只保存文字灵感，不会调用生图 API。</p>
+    <div class="preview" id="preview">YOUR NEXT COVER STARTS HERE.</div>
+  </section>
+</main>
+<footer>404VISION AI STUDIO · PERSONAL CREATIVE WORKSPACE</footer>
+<script>
+const promptBox = document.getElementById("prompt");
+const styleBox = document.getElementById("style");
+const preview = document.getElementById("preview");
+
+document.getElementById("save").addEventListener("click", function() {
+  const prompt = promptBox.value.trim();
+  if (!prompt) {
+    preview.textContent = "请先写下你的封面灵感。";
+    return;
+  }
+
+  const idea = {
+    prompt: prompt,
+    style: styleBox.value,
+    createdAt: new Date().toISOString()
+  };
+
+  const oldIdeas = JSON.parse(
+    localStorage.getItem("404vision_ideas") || "[]"
+  );
+  oldIdeas.unshift(idea);
+  localStorage.setItem(
+    "404vision_ideas",
+    JSON.stringify(oldIdeas.slice(0, 30))
+  );
+
+  preview.textContent = "IDEA SAVED ✓  /  " + idea.style;
+});
+</script>
+</body>
+</html>
