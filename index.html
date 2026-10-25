@@ -177,5 +177,110 @@ document.getElementById("save").addEventListener("click", function() {
 })();
 </script>
 
+
+<section id="image-generator" style="margin:24px 0;padding:20px;background:#111;border:1px solid #b6ff00;border-radius:16px;color:white;font-family:Arial,sans-serif;">
+  <h2 style="color:#b6ff00;margin-top:0;">404vision Image Lab</h2>
+  <p style="color:#aaa;">Turn your underground vision into artwork.</p>
+
+  <label for="vision-prompt">创作提示词</label>
+  <textarea id="vision-prompt" placeholder="例如：Y2K underground rap cover, chrome star, dark emo atmosphere, grainy 2000s photography..." style="display:block;box-sizing:border-box;width:100%;min-height:120px;margin:10px 0;padding:12px;background:#080808;color:white;border:1px solid #444;border-radius:10px;font-size:15px;"></textarea>
+
+  <label for="vision-size">图片尺寸</label>
+  <select id="vision-size" style="display:block;width:100%;margin:10px 0;padding:12px;background:#080808;color:white;border:1px solid #444;border-radius:8px;">
+    <option value="1024x1024">正方形 · 1024 × 1024</option>
+    <option value="1536x1024">横向 · 1536 × 1024</option>
+    <option value="1024x1536">纵向 · 1024 × 1536</option>
+  </select>
+
+  <button id="vision-generate" type="button" style="width:100%;padding:14px;background:#b6ff00;color:#080808;border:0;border-radius:10px;font-weight:bold;font-size:16px;">
+    GENERATE IMAGE ↗
+  </button>
+
+  <p id="vision-status" role="status" style="color:#b6ff00;white-space:pre-wrap;"></p>
+  <div id="vision-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;"></div>
+</section>
+
+<script>
+(() => {
+  const endpoint = "https://404vision-api.2766965282.workers.dev/v1/images/generations";
+  const button = document.getElementById("vision-generate");
+  const prompt = document.getElementById("vision-prompt");
+  const size = document.getElementById("vision-size");
+  const status = document.getElementById("vision-status");
+  const results = document.getElementById("vision-results");
+
+  if (!button || !prompt || !status || !results) return;
+
+  button.addEventListener("click", async () => {
+    const text = prompt.value.trim();
+    if (!text) {
+      status.textContent = "请先输入创作提示词。";
+      return;
+    }
+
+    button.disabled = true;
+    button.style.opacity = "0.6";
+    status.textContent = "正在连接生图服务，请稍候……";
+    results.replaceChildren();
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: text,
+          size: size.value,
+          model: "gpt-image-2"
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || data.error || `请求失败：HTTP ${response.status}`);
+      }
+
+      const images = data.data || data.images || [];
+      let count = 0;
+
+      for (const item of images) {
+        const src = item.url ||
+          (item.b64_json ? `data:image/png;base64,${item.b64_json}` : "");
+
+        if (!src) continue;
+
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "404vision generated artwork";
+        img.style.cssText = "width:100%;height:auto;border-radius:12px;border:1px solid #333;";
+        img.loading = "lazy";
+        results.appendChild(img);
+        count++;
+      }
+
+      if (count) {
+        status.textContent = "生成完成！点击图片可以查看原图。";
+        results.querySelectorAll("img").forEach(img => {
+          img.style.cursor = "pointer";
+          img.addEventListener("click", () => window.open(img.src, "_blank"));
+        });
+      } else {
+        status.textContent = "服务已响应，但没有找到图片结果。请检查接口返回格式。";
+        const pre = document.createElement("pre");
+        pre.style.cssText = "white-space:pre-wrap;overflow-wrap:anywhere;color:#ccc;";
+        pre.textContent = JSON.stringify(data, null, 2).slice(0, 4000);
+        results.appendChild(pre);
+      }
+    } catch (error) {
+      status.textContent = "生成失败：" + (error.message || "网络错误") +
+        "\n请检查 Worker 日志和 API 模型是否可用。";
+    } finally {
+      button.disabled = false;
+      button.style.opacity = "1";
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
