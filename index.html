@@ -133,5 +133,49 @@ document.getElementById("save").addEventListener("click", function() {
   preview.textContent = "IDEA SAVED ✓  /  " + idea.style;
 });
 </script>
+
+<section style="margin:24px auto;padding:20px;max-width:680px;background:#151515;border:1px solid #b6ff00;border-radius:16px;color:#f4f4f5;font-family:Arial,sans-serif">
+  <h2 style="color:#b6ff00">REFERENCE IMAGE</h2>
+  <p>上传参考图，为你的 404vision 创作寻找灵感。</p>
+  <input id="referenceUpload" type="file" accept="image/*" multiple style="max-width:100%;margin:12px 0;color:white">
+  <div id="referencePreview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px"></div>
+  <button id="clearReferences" type="button" style="margin-top:16px;padding:10px 16px;background:#b6ff00;color:#080808;border:0;border-radius:8px;font-weight:bold">清除预览</button>
+  <p style="font-size:12px;color:#aaa">图片仅在当前页面预览，不会自动上传到服务器。</p>
+</section>
+
+<script>
+(function () {
+  const upload = document.getElementById('referenceUpload');
+  const preview = document.getElementById('referencePreview');
+  const clear = document.getElementById('clearReferences');
+  if (!upload || !preview || !clear) return;
+
+  let urls = [];
+
+  function clearPreview() {
+    urls.forEach(url => URL.revokeObjectURL(url));
+    urls = [];
+    preview.replaceChildren();
+    upload.value = '';
+  }
+
+  upload.addEventListener('change', function () {
+    clearPreview();
+    Array.from(upload.files || []).slice(0, 6).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const url = URL.createObjectURL(file);
+      urls.push(url);
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = '参考图预览';
+      img.style.cssText = 'width:100%;max-height:220px;object-fit:contain;border-radius:8px;background:#222';
+      preview.appendChild(img);
+    });
+  });
+
+  clear.addEventListener('click', clearPreview);
+})();
+</script>
+
 </body>
 </html>
