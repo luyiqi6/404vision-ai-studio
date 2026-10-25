@@ -255,7 +255,7 @@ document.getElementById("save").addEventListener("click", function() {
         body: JSON.stringify({
           prompt: text,
           size: size.value,
-          model: "gpt-image-2"
+          model: document.getElementById("vision-model").value
         })
       });
 
